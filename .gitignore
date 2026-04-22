@@ -1,6 +1,30 @@
-# IDE and tool configs
-.cursor/
-.claude/
+node_modules
+dist
+*.log
 
-# OS files
+# env files (keep .env.example)
+.env
+!.env.example
+
+# database
+server/data/
+
+# coverage
+coverage
+.nyc_output
+
+# OS
 .DS_Store
+
+# IDE
+.idea
+.vscode
+*.swp
+
+# AI
+.claude
+.cursor
+
+# Playwright
+test-results/
+playwright-report/

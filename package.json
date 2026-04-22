@@ -1,0 +1,21 @@
+{
+  "name": "bmad-to-do-app",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server",
+    "shared"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n client,server -c cyan,magenta \"npm run dev -w client\" \"npm run dev -w server\"",
+    "test": "npm run test -w client && npm run test -w server",
+    "test:unit": "npm run test:unit -w client && npm run test:unit -w server",
+    "test:integration": "npm run test:integration -w server",
+    "test:e2e": "npx playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "concurrently": "^9.0.0"
+  }
+}
