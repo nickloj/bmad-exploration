@@ -1,0 +1,6 @@
+# IDE and tool configs
+.cursor/
+.claude/
+
+# OS files
+.DS_Store
