@@ -1,4 +1,4 @@
-import { type FastifyPluginAsync } from 'fastify';
+import { type FastifyPluginAsync, type FastifyError } from 'fastify';
 import { v4 as uuidv4 } from 'uuid';
 import { getDb } from '../../../db/init.js';
 import {
@@ -26,7 +26,7 @@ function toTodoResponse(row: DbTodoRow) {
 }
 
 const todos: FastifyPluginAsync = async (fastify): Promise<void> => {
-  fastify.setErrorHandler((error, _request, reply) => {
+  fastify.setErrorHandler((error: FastifyError, _request, reply) => {
     if (error.validation) {
       reply.code(400).send({ error: error.message });
       return;
@@ -70,9 +70,9 @@ const todos: FastifyPluginAsync = async (fastify): Promise<void> => {
         return { error: 'Todo not found' };
       }
 
-      if (completed) {
+      if (completed && existing.completed === 0) {
         db.prepare("UPDATE todos SET completed = 1, completed_at = datetime('now') WHERE id = ?").run(id);
-      } else {
+      } else if (!completed) {
         db.prepare('UPDATE todos SET completed = 0, completed_at = NULL WHERE id = ?').run(id);
       }
 

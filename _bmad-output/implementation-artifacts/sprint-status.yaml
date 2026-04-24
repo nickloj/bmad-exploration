@@ -45,8 +45,8 @@ development_status:
   # Epic 1: Project Foundation & Core Task Management
   epic-1: in-progress
   1-1-project-scaffolding-and-database-setup: done
-  1-2-api-crud-endpoints: review
-  1-3-frontend-todo-list-and-api-integration: backlog
+  1-2-api-crud-endpoints: done
+  1-3-frontend-todo-list-and-api-integration: done
   1-4-complete-and-delete-todos: backlog
   epic-1-retrospective: optional
 

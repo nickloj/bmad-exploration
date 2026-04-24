@@ -1,6 +1,6 @@
 # Story 1.2: API CRUD Endpoints
 
-Status: review
+Status: done
 
 ## Story
 
@@ -155,6 +155,14 @@ Never interpolate user input into SQL strings.
 - [x] [Review][Patch] Validation error format — fixed: added custom error handler returning `{ error: string }`, strips internal details on 500. [server/src/routes/api/todos/index.ts]
 - [x] [Review][Patch] Missing integration test — added full CRUD cycle test. [server/src/routes/api/todos/todos.test.ts]
 - [x] [Review][Defer] Test DB singleton interference — deferred, pre-existing pattern from Story 1.1. [server/src/routes/api/todos/todos.test.ts]
+
+### Review Findings (Round 2 — 2026-04-24)
+
+- [x] [Review][Patch] PATCH idempotency — fixed: `completed_at` only updated on `false → true` transition; re-patching an already-completed todo preserves original timestamp. [server/src/routes/api/todos/index.ts:73]
+- [x] [Review][Defer] Validation error messages expose AJV schema internals via `error.message` — deferred: schema paths/constraints are not truly internal like stack traces; revisit when API is public-facing.
+- [x] [Review][Patch] `todoParamsSchema` missing `additionalProperties: false` — fixed. [server/src/schemas/todo.ts:19-25]
+- [x] [Review][Patch] `:id` route param missing `maxLength` — fixed: added `maxLength: 36`. [server/src/schemas/todo.ts:22-23]
+- [x] [Review][Defer] `completed_at` / `created_at` stored as SQLite `datetime('now')` — returns `"YYYY-MM-DD HH:MM:SS"` without `Z` suffix, not valid ISO 8601. Pre-existing from Story 1.1 DB schema. [server/src/routes/api/todos/index.ts]
 
 ## Dev Agent Record
 

@@ -1,10 +1,20 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import App from './App';
+
+vi.mock('./hooks/useTodos', () => ({
+  useTodos: () => ({ todos: [], isLoading: false, addTodo: vi.fn() }),
+}));
 
 describe('App', () => {
   it('renders the app title', () => {
     render(<App />);
-    expect(screen.getByText('bmad-to-do-app')).toBeInTheDocument();
+    expect(screen.getByText('My Todos')).toBeInTheDocument();
+  });
+
+  it('renders TodoInput and TodoList', () => {
+    render(<App />);
+    expect(screen.getByPlaceholderText('Add a new task...')).toBeInTheDocument();
+    expect(screen.getByText('No tasks yet.')).toBeInTheDocument();
   });
 });
