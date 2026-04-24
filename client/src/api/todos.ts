@@ -15,3 +15,18 @@ export async function createTodo(text: string): Promise<Todo> {
   if (!res.ok) throw new Error('Failed to create todo');
   return res.json() as Promise<Todo>;
 }
+
+export async function updateTodo(id: string, completed: boolean): Promise<Todo> {
+  const res = await fetch(`/api/todos/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ completed }),
+  });
+  if (!res.ok) throw new Error('Failed to update todo');
+  return res.json() as Promise<Todo>;
+}
+
+export async function deleteTodo(id: string): Promise<void> {
+  const res = await fetch(`/api/todos/${id}`, { method: 'DELETE' });
+  if (!res.ok) throw new Error('Failed to delete todo');
+}

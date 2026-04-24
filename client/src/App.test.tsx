@@ -3,7 +3,14 @@ import { render, screen } from '@testing-library/react';
 import App from './App';
 
 vi.mock('./hooks/useTodos', () => ({
-  useTodos: () => ({ todos: [], isLoading: false, addTodo: vi.fn() }),
+  useTodos: () => ({
+    todos: [],
+    isLoading: false,
+    error: null,
+    addTodo: vi.fn(),
+    completeTodo: vi.fn(),
+    deleteTodo: vi.fn(),
+  }),
 }));
 
 describe('App', () => {
@@ -16,5 +23,10 @@ describe('App', () => {
     render(<App />);
     expect(screen.getByPlaceholderText('Add a new task...')).toBeInTheDocument();
     expect(screen.getByText('No tasks yet.')).toBeInTheDocument();
+  });
+
+  it('does not render error message when error is null', () => {
+    render(<App />);
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 });

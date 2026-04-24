@@ -4,6 +4,11 @@
 
 - **Test DB singleton interference** — `closeDb()` in afterEach destroys the module-level singleton, which could cause issues if test files run in parallel and share the same DB_PATH (defaulting to `data/todos.db`). Pre-existing pattern established in Story 1.1. Consider setting `DB_PATH=:memory:` in test environment or configuring Vitest for sequential execution.
 
+## Deferred from: code review of 1-4-complete-and-delete-todos (2026-04-24)
+
+- **Stale `prev` closure in optimistic rollback** — `prev = todos` captures state at call time; rapid concurrent operations could cause a successful op to vanish on a subsequent rollback. Fix: use a per-id ref or functional rollback. Low risk for single-user app. [client/src/hooks/useTodos.ts]
+- **`completeTodo` on optimistic todo** — if user clicks complete before `createTodo` resolves, PATCH fires with a fake id, fails, and shows a spurious error. No data loss. Mitigation: disable complete/delete buttons on optimistic items. [client/src/hooks/useTodos.ts]
+
 ## Deferred from: code review of 1-3-frontend-todo-list-and-api-integration (2026-04-24)
 
 - **Optimistic todo not rolled back on API failure** — phantom stays in list until reload. Story 1.4 adds error handling and rollback. [client/src/hooks/useTodos.ts]
