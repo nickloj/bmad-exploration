@@ -3,6 +3,7 @@ export interface Todo {
   text: string;
   completed: boolean;
   createdAt: string;
+  completedAt: string | null;
 }
 
 export interface CreateTodoRequest {

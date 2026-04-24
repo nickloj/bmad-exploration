@@ -28,5 +28,6 @@ describe('db/init', () => {
     expect(columnNames).toContain('text');
     expect(columnNames).toContain('completed');
     expect(columnNames).toContain('created_at');
+    expect(columnNames).toContain('completed_at');
   });
 });
