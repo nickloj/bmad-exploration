@@ -26,7 +26,7 @@ describe('TodoList', () => {
     expect(screen.getByText('No tasks yet.')).toBeInTheDocument();
   });
 
-  it('shows loading indicator when isLoading is true', () => {
+  it('shows LoadingState when isLoading is true', () => {
     render(<TodoList todos={[]} isLoading={true} onComplete={noop} onDelete={noop} />);
     expect(screen.getByText('Loading...')).toBeInTheDocument();
     expect(screen.queryByText('No tasks yet.')).not.toBeInTheDocument();

@@ -51,10 +51,10 @@ development_status:
   epic-1-retrospective: optional
 
   # Epic 2: Visual Feedback, Rewards & Polish
-  epic-2: backlog
-  2-1-task-completion-animation: backlog
-  2-2-zero-list-celebration: backlog
-  2-3-application-states-polish: backlog
+  epic-2: in-progress
+  2-1-task-completion-animation: done
+  2-2-zero-list-celebration: done
+  2-3-application-states-polish: done
   epic-2-retrospective: optional
 
   # Epic 3: Anti-Hoarding & Behavior Design

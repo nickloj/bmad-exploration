@@ -7,10 +7,16 @@ vi.mock('./hooks/useTodos', () => ({
     todos: [],
     isLoading: false,
     error: null,
+    shouldCelebrate: false,
+    dismissCelebration: vi.fn(),
     addTodo: vi.fn(),
     completeTodo: vi.fn(),
     deleteTodo: vi.fn(),
   }),
+}));
+
+vi.mock('./components/CelebrationOverlay', () => ({
+  CelebrationOverlay: () => null,
 }));
 
 describe('App', () => {

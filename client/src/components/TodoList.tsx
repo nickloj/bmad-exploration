@@ -1,6 +1,7 @@
 import type { Todo } from '../../../shared/types/todo';
 import { TodoItem } from './TodoItem';
 import { EmptyState } from './EmptyState';
+import { LoadingState } from './LoadingState';
 
 interface TodoListProps {
   todos: Todo[];
@@ -11,7 +12,7 @@ interface TodoListProps {
 
 export function TodoList({ todos, isLoading, onComplete, onDelete }: TodoListProps) {
   if (isLoading) {
-    return <p className="text-center text-gray-400 py-8">Loading...</p>;
+    return <LoadingState />;
   }
 
   if (todos.length === 0) {

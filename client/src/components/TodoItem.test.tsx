@@ -20,15 +20,26 @@ describe('TodoItem', () => {
 
   it('active todo does not have strikethrough', () => {
     render(<TodoItem todo={makeTodo({ completed: false })} onComplete={vi.fn()} onDelete={vi.fn()} />);
-    const text = screen.getByText('Buy groceries');
-    expect(text.className).not.toContain('line-through');
+    expect(screen.getByText('Buy groceries').className).not.toContain('line-through');
   });
 
-  it('completed todo renders with visual distinction (strikethrough + muted color)', () => {
+  it('completed todo renders with strikethrough and muted color', () => {
     render(<TodoItem todo={makeTodo({ completed: true })} onComplete={vi.fn()} onDelete={vi.fn()} />);
     const text = screen.getByText('Buy groceries');
     expect(text.className).toContain('line-through');
     expect(text.className).toContain('text-gray-400');
+  });
+
+  it('completed todo text has transition and strikethrough-sweep classes for animation', () => {
+    render(<TodoItem todo={makeTodo({ completed: true })} onComplete={vi.fn()} onDelete={vi.fn()} />);
+    const text = screen.getByText('Buy groceries');
+    expect(text.className).toContain('transition-opacity');
+    expect(text.className).toContain('strikethrough-sweep');
+  });
+
+  it('text span has motion-reduce class for reduced-motion support', () => {
+    render(<TodoItem todo={makeTodo()} onComplete={vi.fn()} onDelete={vi.fn()} />);
+    expect(screen.getByText('Buy groceries').className).toContain('motion-reduce');
   });
 
   it('clicking complete button triggers onComplete with todo id', () => {

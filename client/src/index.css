@@ -1,3 +1,31 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@keyframes strikethrough-sweep {
+  from { width: 0% }
+  to   { width: 100% }
+}
+
+@layer utilities {
+  .strikethrough-sweep {
+    position: relative;
+  }
+
+  .strikethrough-sweep::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    height: 2px;
+    background-color: currentColor;
+    width: 100%;
+    animation: strikethrough-sweep 0.3s ease-out forwards;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .strikethrough-sweep::after {
+      animation: none;
+    }
+  }
+}

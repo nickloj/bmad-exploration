@@ -122,4 +122,59 @@ describe('useTodos', () => {
     expect(result.current.todos).toHaveLength(1);
     expect(result.current.error).toBe('Failed to delete todo. Please try again.');
   });
+
+  it('sets shouldCelebrate optimistically when completing the last active todo', async () => {
+    const todo = makeTodo({ id: 'todo-1', completed: false });
+    vi.mocked(fetchTodos).mockResolvedValue([todo]);
+    let resolve!: (t: Todo) => void;
+    vi.mocked(updateTodo).mockReturnValue(new Promise<Todo>((res) => { resolve = res; }));
+
+    const { result } = renderHook(() => useTodos());
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    act(() => { void result.current.completeTodo('todo-1'); });
+    // Celebration fires optimistically — before API resolves
+    expect(result.current.shouldCelebrate).toBe(true);
+
+    await act(async () => { resolve({ ...todo, completed: true }); });
+    expect(result.current.shouldCelebrate).toBe(true);
+  });
+
+  it('resets shouldCelebrate on API failure', async () => {
+    const todo = makeTodo({ id: 'todo-1', completed: false });
+    vi.mocked(fetchTodos).mockResolvedValue([todo]);
+    vi.mocked(updateTodo).mockRejectedValue(new Error('fail'));
+
+    const { result } = renderHook(() => useTodos());
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    await act(async () => { await result.current.completeTodo('todo-1'); });
+
+    expect(result.current.shouldCelebrate).toBe(false);
+  });
+
+  it('does not set shouldCelebrate when active todos remain', async () => {
+    const todos = [
+      makeTodo({ id: 'todo-1', completed: false }),
+      makeTodo({ id: 'todo-2', completed: false }),
+    ];
+    vi.mocked(fetchTodos).mockResolvedValue(todos);
+    vi.mocked(updateTodo).mockResolvedValue({ ...todos[0], completed: true });
+
+    const { result } = renderHook(() => useTodos());
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    await act(async () => { await result.current.completeTodo('todo-1'); });
+
+    expect(result.current.shouldCelebrate).toBe(false);
+  });
+
+  it('sets error when fetchTodos fails on mount', async () => {
+    vi.mocked(fetchTodos).mockRejectedValue(new Error('network error'));
+
+    const { result } = renderHook(() => useTodos());
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(result.current.error).toBe('Failed to load todos. Please refresh.');
+  });
 });

@@ -2,9 +2,10 @@ import { useTodos } from './hooks/useTodos';
 import { TodoInput } from './components/TodoInput';
 import { TodoList } from './components/TodoList';
 import { ErrorMessage } from './components/ErrorMessage';
+import { CelebrationOverlay } from './components/CelebrationOverlay';
 
 function App() {
-  const { todos, isLoading, error, addTodo, completeTodo, deleteTodo } = useTodos();
+  const { todos, isLoading, error, shouldCelebrate, dismissCelebration, addTodo, completeTodo, deleteTodo } = useTodos();
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
@@ -15,6 +16,7 @@ function App() {
           <ErrorMessage error={error} />
         </div>
         <TodoList todos={todos} isLoading={isLoading} onComplete={completeTodo} onDelete={deleteTodo} />
+        <CelebrationOverlay active={shouldCelebrate} onDismiss={dismissCelebration} />
       </div>
     </div>
   );
