@@ -27,7 +27,7 @@ export function TodoItem({ todo, fadeOpacity = 1, onComplete, onDelete }: TodoIt
       <span
         className={`flex-1 transition-opacity duration-300 motion-reduce:transition-none ${
           todo.completed
-            ? 'line-through text-gray-400 strikethrough-sweep'
+            ? 'line-through text-gray-500 strikethrough-sweep'
             : 'text-gray-800'
         }`}
       >

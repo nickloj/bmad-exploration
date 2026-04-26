@@ -27,7 +27,7 @@ describe('TodoItem', () => {
     render(<TodoItem todo={makeTodo({ completed: true })} onComplete={vi.fn()} onDelete={vi.fn()} />);
     const text = screen.getByText('Buy groceries');
     expect(text.className).toContain('line-through');
-    expect(text.className).toContain('text-gray-400');
+    expect(text.className).toContain('text-gray-500');
   });
 
   it('completed todo text has transition and strikethrough-sweep classes for animation', () => {
