@@ -48,17 +48,17 @@ development_status:
   1-2-api-crud-endpoints: done
   1-3-frontend-todo-list-and-api-integration: done
   1-4-complete-and-delete-todos: done
-  epic-1-retrospective: optional
+  epic-1-retrospective: done
 
   # Epic 2: Visual Feedback, Rewards & Polish
   epic-2: in-progress
   2-1-task-completion-animation: done
   2-2-zero-list-celebration: done
   2-3-application-states-polish: done
-  epic-2-retrospective: optional
+  epic-2-retrospective: done
 
   # Epic 3: Anti-Hoarding & Behavior Design
-  epic-3: backlog
-  3-1-completed-task-auto-fade: backlog
-  3-2-list-length-warning-and-hoarding-nudge: backlog
-  epic-3-retrospective: optional
+  epic-3: in-progress
+  3-1-completed-task-auto-fade: done
+  3-2-list-length-warning-and-hoarding-nudge: done
+  epic-3-retrospective: done

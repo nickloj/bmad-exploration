@@ -9,6 +9,12 @@
 - **Stale `prev` closure in optimistic rollback** — `prev = todos` captures state at call time; rapid concurrent operations could cause a successful op to vanish on a subsequent rollback. Fix: use a per-id ref or functional rollback. Low risk for single-user app. [client/src/hooks/useTodos.ts]
 - **`completeTodo` on optimistic todo** — if user clicks complete before `createTodo` resolves, PATCH fires with a fake id, fails, and shows a spurious error. No data loss. Mitigation: disable complete/delete buttons on optimistic items. [client/src/hooks/useTodos.ts]
 
+## Deferred from: code review of Epic 3 (2026-04-26)
+
+- **Abrupt final-frame removal of faded todos** — `visibleTodos` filter removes the item the same tick its opacity reaches 0; CSS transition can't complete on a removed DOM element. Fix: defer removal by one tick or use `pointer-events-none` + `opacity: 0` before eviction. [client/src/hooks/useTodos.ts]
+- **Interactive controls remain accessible during fade** — opacity applied to the entire `<li>` including buttons; buttons become nearly invisible but remain clickable near end of fade. Add `pointer-events-none` when opacity drops below a threshold. [client/src/components/TodoItem.tsx]
+- **Future `completedAt` timestamp (clock skew) never fades** — negative elapsed returns 1 indefinitely. [client/src/lib/fade.ts]
+
 ## Deferred from: code review of 1-3-frontend-todo-list-and-api-integration (2026-04-24)
 
 - **Optimistic todo not rolled back on API failure** — phantom stays in list until reload. Story 1.4 adds error handling and rollback. [client/src/hooks/useTodos.ts]

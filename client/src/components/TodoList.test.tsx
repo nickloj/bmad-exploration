@@ -12,22 +12,23 @@ const makeTodo = (id: string, text: string): Todo => ({
 });
 
 const noop = vi.fn();
+const getOpacity = () => 1;
 
 describe('TodoList', () => {
   it('renders a TodoItem for each todo', () => {
     const todos = [makeTodo('1', 'First task'), makeTodo('2', 'Second task')];
-    render(<TodoList todos={todos} isLoading={false} onComplete={noop} onDelete={noop} />);
+    render(<TodoList todos={todos} isLoading={false} getOpacity={getOpacity} onComplete={noop} onDelete={noop} />);
     expect(screen.getByText('First task')).toBeInTheDocument();
     expect(screen.getByText('Second task')).toBeInTheDocument();
   });
 
   it('shows EmptyState when todos array is empty and not loading', () => {
-    render(<TodoList todos={[]} isLoading={false} onComplete={noop} onDelete={noop} />);
+    render(<TodoList todos={[]} isLoading={false} getOpacity={getOpacity} onComplete={noop} onDelete={noop} />);
     expect(screen.getByText('No tasks yet.')).toBeInTheDocument();
   });
 
   it('shows LoadingState when isLoading is true', () => {
-    render(<TodoList todos={[]} isLoading={true} onComplete={noop} onDelete={noop} />);
+    render(<TodoList todos={[]} isLoading={true} getOpacity={getOpacity} onComplete={noop} onDelete={noop} />);
     expect(screen.getByText('Loading...')).toBeInTheDocument();
     expect(screen.queryByText('No tasks yet.')).not.toBeInTheDocument();
   });

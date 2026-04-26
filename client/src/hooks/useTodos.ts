@@ -1,12 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { Todo } from '../../../shared/types/todo';
 import { fetchTodos, createTodo, updateTodo, deleteTodo as apiDeleteTodo } from '../api/todos';
+import { getFadeOpacity, MAX_ACTIVE_THRESHOLD } from '../lib/fade';
 
 export function useTodos() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [shouldCelebrate, setShouldCelebrate] = useState(false);
+  const [now, setNow] = useState(Date.now());
 
   useEffect(() => {
     fetchTodos()
@@ -14,6 +16,21 @@ export function useTodos() {
       .catch(() => setError('Failed to load todos. Please refresh.'))
       .finally(() => setIsLoading(false));
   }, []);
+
+  // Tick every second while completed todos exist to drive the fade;
+  // also evicts fully-faded todos from state to stop the interval eventually.
+  useEffect(() => {
+    const hasCompleted = todos.some((t) => t.completed && t.completedAt);
+    if (!hasCompleted) return;
+    const interval = setInterval(() => {
+      const currentNow = Date.now();
+      setNow(currentNow);
+      setTodos((prev) =>
+        prev.filter((t) => !t.completed || getFadeOpacity(t.completedAt, currentNow) > 0),
+      );
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [todos]);
 
   async function addTodo(text: string) {
     const optimisticTodo: Todo = {
@@ -52,7 +69,6 @@ export function useTodos() {
       ),
     );
 
-    // Fire celebration optimistically — if API fails, it rolls back with todos
     if (willCelebrate) setShouldCelebrate(true);
 
     try {
@@ -83,5 +99,27 @@ export function useTodos() {
     setShouldCelebrate(false);
   }, []);
 
-  return { todos, isLoading, error, shouldCelebrate, dismissCelebration, addTodo, completeTodo, deleteTodo: removeTodo };
+  const getOpacity = useCallback(
+    (todo: Todo) => getFadeOpacity(todo.completedAt, now),
+    [now],
+  );
+
+  const visibleTodos = todos.filter(
+    (t) => !t.completed || getFadeOpacity(t.completedAt, now) > 0,
+  );
+
+  const isOverloaded = todos.filter((t) => !t.completed).length > MAX_ACTIVE_THRESHOLD;
+
+  return {
+    todos: visibleTodos,
+    isLoading,
+    error,
+    shouldCelebrate,
+    isOverloaded,
+    dismissCelebration,
+    getOpacity,
+    addTodo,
+    completeTodo,
+    deleteTodo: removeTodo,
+  };
 }

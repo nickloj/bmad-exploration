@@ -6,11 +6,12 @@ import { LoadingState } from './LoadingState';
 interface TodoListProps {
   todos: Todo[];
   isLoading: boolean;
+  getOpacity: (todo: Todo) => number;
   onComplete: (id: string) => void;
   onDelete: (id: string) => void;
 }
 
-export function TodoList({ todos, isLoading, onComplete, onDelete }: TodoListProps) {
+export function TodoList({ todos, isLoading, getOpacity, onComplete, onDelete }: TodoListProps) {
   if (isLoading) {
     return <LoadingState />;
   }
@@ -22,7 +23,13 @@ export function TodoList({ todos, isLoading, onComplete, onDelete }: TodoListPro
   return (
     <ul className="flex flex-col gap-2">
       {todos.map((todo) => (
-        <TodoItem key={todo.id} todo={todo} onComplete={onComplete} onDelete={onDelete} />
+        <TodoItem
+          key={todo.id}
+          todo={todo}
+          fadeOpacity={getOpacity(todo)}
+          onComplete={onComplete}
+          onDelete={onDelete}
+        />
       ))}
     </ul>
   );

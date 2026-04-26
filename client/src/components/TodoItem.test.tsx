@@ -37,6 +37,22 @@ describe('TodoItem', () => {
     expect(text.className).toContain('strikethrough-sweep');
   });
 
+  it('applies fadeOpacity as inline style', () => {
+    const { container } = render(
+      <TodoItem todo={makeTodo()} fadeOpacity={0.5} onComplete={vi.fn()} onDelete={vi.fn()} />,
+    );
+    const li = container.querySelector('li');
+    expect(li).toHaveStyle({ opacity: '0.5' });
+  });
+
+  it('defaults to opacity 1 when fadeOpacity is not provided', () => {
+    const { container } = render(
+      <TodoItem todo={makeTodo()} onComplete={vi.fn()} onDelete={vi.fn()} />,
+    );
+    const li = container.querySelector('li');
+    expect(li).toHaveStyle({ opacity: '1' });
+  });
+
   it('text span has motion-reduce class for reduced-motion support', () => {
     render(<TodoItem todo={makeTodo()} onComplete={vi.fn()} onDelete={vi.fn()} />);
     expect(screen.getByText('Buy groceries').className).toContain('motion-reduce');

@@ -2,13 +2,17 @@ import type { Todo } from '../../../shared/types/todo';
 
 interface TodoItemProps {
   todo: Todo;
+  fadeOpacity?: number;
   onComplete: (id: string) => void;
   onDelete: (id: string) => void;
 }
 
-export function TodoItem({ todo, onComplete, onDelete }: TodoItemProps) {
+export function TodoItem({ todo, fadeOpacity = 1, onComplete, onDelete }: TodoItemProps) {
   return (
-    <li className="py-3 px-4 bg-white rounded-lg shadow-sm border border-gray-100 flex items-center gap-3">
+    <li
+      className="py-3 px-4 bg-white rounded-lg shadow-sm border border-gray-100 flex items-center gap-3 transition-opacity duration-1000"
+      style={{ opacity: fadeOpacity }}
+    >
       <button
         onClick={() => onComplete(todo.id)}
         aria-label={todo.completed ? 'Mark incomplete' : 'Mark complete'}
@@ -23,8 +27,8 @@ export function TodoItem({ todo, onComplete, onDelete }: TodoItemProps) {
       <span
         className={`flex-1 transition-opacity duration-300 motion-reduce:transition-none ${
           todo.completed
-            ? 'line-through text-gray-400 opacity-60 strikethrough-sweep'
-            : 'text-gray-800 opacity-100'
+            ? 'line-through text-gray-400 strikethrough-sweep'
+            : 'text-gray-800'
         }`}
       >
         {todo.text}

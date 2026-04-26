@@ -71,7 +71,7 @@ describe('useTodos', () => {
   it('completeTodo optimistically sets completed in state', async () => {
     const todo = makeTodo({ id: 'todo-1', completed: false });
     vi.mocked(fetchTodos).mockResolvedValue([todo]);
-    vi.mocked(updateTodo).mockResolvedValue({ ...todo, completed: true, completedAt: '2026-01-02T00:00:00.000Z' });
+    vi.mocked(updateTodo).mockResolvedValue({ ...todo, completed: true, completedAt: new Date().toISOString() });
 
     const { result } = renderHook(() => useTodos());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
@@ -176,5 +176,76 @@ describe('useTodos', () => {
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     expect(result.current.error).toBe('Failed to load todos. Please refresh.');
+  });
+
+  it('visibleTodos excludes todos with fully-faded opacity (completedAt far in past)', async () => {
+    const fadedTodo = makeTodo({
+      id: 'faded',
+      completed: true,
+      completedAt: new Date(Date.now() - 25_000).toISOString(), // past full fade
+    });
+    vi.mocked(fetchTodos).mockResolvedValue([fadedTodo]);
+
+    const { result } = renderHook(() => useTodos());
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(result.current.todos.find((t) => t.id === 'faded')).toBeUndefined();
+  });
+
+  it('visibleTodos includes recently completed todos (not yet faded)', async () => {
+    const freshTodo = makeTodo({
+      id: 'fresh',
+      completed: true,
+      completedAt: new Date().toISOString(), // just completed
+    });
+    vi.mocked(fetchTodos).mockResolvedValue([freshTodo]);
+
+    const { result } = renderHook(() => useTodos());
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(result.current.todos.find((t) => t.id === 'fresh')).toBeDefined();
+  });
+
+  it('getOpacity returns 1 for active todos', async () => {
+    const todo = makeTodo({ id: 'active', completed: false });
+    vi.mocked(fetchTodos).mockResolvedValue([todo]);
+
+    const { result } = renderHook(() => useTodos());
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(result.current.getOpacity(todo)).toBe(1);
+  });
+
+  it('isOverloaded is false when active todos <= threshold', async () => {
+    vi.mocked(fetchTodos).mockResolvedValue([makeTodo(), makeTodo({ id: '2' })]);
+
+    const { result } = renderHook(() => useTodos());
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(result.current.isOverloaded).toBe(false);
+  });
+
+  it('isOverloaded is true when active todos > MAX_ACTIVE_THRESHOLD (7)', async () => {
+    const manyTodos = Array.from({ length: 8 }, (_, i) =>
+      makeTodo({ id: `t${i}`, completed: false }),
+    );
+    vi.mocked(fetchTodos).mockResolvedValue(manyTodos);
+
+    const { result } = renderHook(() => useTodos());
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(result.current.isOverloaded).toBe(true);
+  });
+
+  it('isOverloaded is false at exactly the threshold (7)', async () => {
+    const exactThreshold = Array.from({ length: 7 }, (_, i) =>
+      makeTodo({ id: `t${i}`, completed: false }),
+    );
+    vi.mocked(fetchTodos).mockResolvedValue(exactThreshold);
+
+    const { result } = renderHook(() => useTodos());
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(result.current.isOverloaded).toBe(false);
   });
 });
