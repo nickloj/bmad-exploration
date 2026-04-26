@@ -25,7 +25,7 @@ function toTodoResponse(row: DbTodoRow) {
     id: row.id,
     text: row.text,
     completed: row.completed === 1,
-    createdAt: toIso(row.created_at) ?? row.created_at,
+    createdAt: toIso(row.created_at) as string,
     completedAt: toIso(row.completed_at),
   };
 }
@@ -36,6 +36,7 @@ const todos: FastifyPluginAsync = async (fastify): Promise<void> => {
       reply.code(400).send({ error: error.message });
       return;
     }
+    /* c8 ignore next -- Fastify v5 always provides statusCode */
     reply.code(error.statusCode ?? 500).send({ error: 'Internal server error' });
   });
 

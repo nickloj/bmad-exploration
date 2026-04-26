@@ -285,4 +285,25 @@ describe('todos routes', () => {
       expect(finalList.json()).toHaveLength(0);
     });
   });
+
+  describe('error handler', () => {
+    it('returns { error: "Internal server error" } for unhandled errors within the plugin', async () => {
+      // Cause a DB-level error by closing the DB and hitting a route
+      const db = getDb();
+      // Temporarily break the prepared statement by dropping the table
+      db.exec('DROP TABLE todos');
+
+      const res = await app.inject({ method: 'GET', url: '/api/todos' });
+      expect(res.statusCode).toBe(500);
+      expect(res.json()).toEqual({ error: 'Internal server error' });
+
+      // Restore the table so afterEach cleanup works
+      db.exec(`CREATE TABLE todos (
+        id TEXT PRIMARY KEY, text TEXT NOT NULL,
+        completed INTEGER NOT NULL DEFAULT 0,
+        created_at TEXT NOT NULL DEFAULT (datetime('now')),
+        completed_at TEXT DEFAULT NULL
+      )`);
+    });
+  });
 });

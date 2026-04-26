@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useTodos } from './useTodos';
 import type { Todo } from '../../../shared/types/todo';
@@ -247,5 +247,40 @@ describe('useTodos', () => {
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     expect(result.current.isOverloaded).toBe(false);
+  });
+
+  it('dismissCelebration sets shouldCelebrate to false', async () => {
+    const todo = makeTodo({ id: 'todo-1', completed: false });
+    vi.mocked(fetchTodos).mockResolvedValue([todo]);
+    vi.mocked(updateTodo).mockResolvedValue({ ...todo, completed: true, completedAt: new Date().toISOString() });
+
+    const { result } = renderHook(() => useTodos());
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    // Trigger celebration
+    await act(async () => { await result.current.completeTodo('todo-1'); });
+    expect(result.current.shouldCelebrate).toBe(true);
+
+    // Dismiss it
+    act(() => { result.current.dismissCelebration(); });
+    expect(result.current.shouldCelebrate).toBe(false);
+  });
+
+  it('tick interval evicts fully-faded todos from state', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: false });
+    const fadedAt = new Date(Date.now() - 25_000).toISOString(); // past full fade threshold
+    const fadedTodo = makeTodo({ id: 'fading', completed: true, completedAt: fadedAt });
+    vi.mocked(fetchTodos).mockResolvedValue([fadedTodo]);
+
+    const { result } = renderHook(() => useTodos());
+
+    // Drain the fetchTodos microtask
+    await act(async () => { await vi.runAllTimersAsync(); });
+
+    // Advance 1s so the setInterval callback fires
+    await act(async () => { await vi.advanceTimersByTimeAsync(1001); });
+
+    expect(result.current.todos.find((t) => t.id === 'fading')).toBeUndefined();
+    vi.useRealTimers();
   });
 });

@@ -13,19 +13,20 @@
     "test:integration": "vitest run --dir test"
   },
   "dependencies": {
-    "fastify": "^5.0.0",
-    "fastify-plugin": "^5.0.0",
     "@fastify/autoload": "^6.0.0",
     "@fastify/cors": "^11.0.0",
     "@fastify/sensible": "^6.0.0",
     "better-sqlite3": "^11.0.0",
+    "fastify": "^5.0.0",
     "fastify-cli": "^7.4.1",
+    "fastify-plugin": "^5.0.0",
     "uuid": "^11.0.0"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.0",
     "@types/node": "^24.0.8",
     "@types/uuid": "^10.0.0",
+    "@vitest/coverage-v8": "^3.2.4",
     "concurrently": "^9.0.0",
     "fastify-tsconfig": "^3.0.0",
     "typescript": "~5.9.2",
