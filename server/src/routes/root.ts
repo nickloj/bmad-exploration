@@ -4,6 +4,10 @@ const root: FastifyPluginAsync = async (fastify): Promise<void> => {
   fastify.get('/', async () => {
     return { status: 'ok' };
   });
+
+  fastify.get('/health', async () => {
+    return { status: 'ok' };
+  });
 };
 
 export default root;
