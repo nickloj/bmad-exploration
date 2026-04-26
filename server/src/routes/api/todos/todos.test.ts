@@ -101,10 +101,7 @@ describe('todos routes', () => {
 
       expect(res.statusCode).toBe(400);
       const body = res.json();
-      expect(body).toHaveProperty('error');
-      expect(typeof body.error).toBe('string');
-      expect(body).not.toHaveProperty('statusCode');
-      expect(body).not.toHaveProperty('message');
+      expect(body).toEqual({ error: 'Invalid request' });
     });
 
     it('returns 400 when text is empty string', async () => {
@@ -141,11 +138,11 @@ describe('todos routes', () => {
   describe('PATCH /api/todos/:id', () => {
     it('marks a todo as completed and sets completedAt', async () => {
       const db = getDb();
-      db.prepare("INSERT INTO todos (id, text) VALUES ('patch-id', 'Test')").run();
+      db.prepare("INSERT INTO todos (id, text) VALUES ('96ee2841-4235-4f3a-852c-ddf3ee7cb62a', 'Test')").run();
 
       const res = await app.inject({
         method: 'PATCH',
-        url: '/api/todos/patch-id',
+        url: '/api/todos/96ee2841-4235-4f3a-852c-ddf3ee7cb62a',
         payload: { completed: true },
       });
 
@@ -158,12 +155,12 @@ describe('todos routes', () => {
     it('marks a completed todo as incomplete and clears completedAt', async () => {
       const db = getDb();
       db.prepare(
-        "INSERT INTO todos (id, text, completed, completed_at) VALUES ('patch-id', 'Test', 1, datetime('now'))",
+        "INSERT INTO todos (id, text, completed, completed_at) VALUES ('96ee2841-4235-4f3a-852c-ddf3ee7cb62a', 'Test', 1, datetime('now'))",
       ).run();
 
       const res = await app.inject({
         method: 'PATCH',
-        url: '/api/todos/patch-id',
+        url: '/api/todos/96ee2841-4235-4f3a-852c-ddf3ee7cb62a',
         payload: { completed: false },
       });
 
@@ -176,7 +173,7 @@ describe('todos routes', () => {
     it('returns 404 when todo does not exist', async () => {
       const res = await app.inject({
         method: 'PATCH',
-        url: '/api/todos/nonexistent',
+        url: '/api/todos/d3fd2ba0-c5c4-47c4-a436-37f1eb307e18',
         payload: { completed: true },
       });
 
@@ -186,11 +183,11 @@ describe('todos routes', () => {
 
     it('returns 400 when completed is not a boolean', async () => {
       const db = getDb();
-      db.prepare("INSERT INTO todos (id, text) VALUES ('patch-id', 'Test')").run();
+      db.prepare("INSERT INTO todos (id, text) VALUES ('96ee2841-4235-4f3a-852c-ddf3ee7cb62a', 'Test')").run();
 
       const res = await app.inject({
         method: 'PATCH',
-        url: '/api/todos/patch-id',
+        url: '/api/todos/96ee2841-4235-4f3a-852c-ddf3ee7cb62a',
         payload: { completed: 'yes' },
       });
 
@@ -199,11 +196,11 @@ describe('todos routes', () => {
 
     it('returns 400 when completed is missing', async () => {
       const db = getDb();
-      db.prepare("INSERT INTO todos (id, text) VALUES ('patch-id', 'Test')").run();
+      db.prepare("INSERT INTO todos (id, text) VALUES ('96ee2841-4235-4f3a-852c-ddf3ee7cb62a', 'Test')").run();
 
       const res = await app.inject({
         method: 'PATCH',
-        url: '/api/todos/patch-id',
+        url: '/api/todos/96ee2841-4235-4f3a-852c-ddf3ee7cb62a',
         payload: {},
       });
 
@@ -212,11 +209,11 @@ describe('todos routes', () => {
 
     it('returns 400 when body has extra fields', async () => {
       const db = getDb();
-      db.prepare("INSERT INTO todos (id, text) VALUES ('patch-id', 'Test')").run();
+      db.prepare("INSERT INTO todos (id, text) VALUES ('96ee2841-4235-4f3a-852c-ddf3ee7cb62a', 'Test')").run();
 
       const res = await app.inject({
         method: 'PATCH',
-        url: '/api/todos/patch-id',
+        url: '/api/todos/96ee2841-4235-4f3a-852c-ddf3ee7cb62a',
         payload: { completed: true, extra: 'field' },
       });
 
@@ -227,23 +224,23 @@ describe('todos routes', () => {
   describe('DELETE /api/todos/:id', () => {
     it('deletes a todo and returns 204', async () => {
       const db = getDb();
-      db.prepare("INSERT INTO todos (id, text) VALUES ('del-id', 'Delete me')").run();
+      db.prepare("INSERT INTO todos (id, text) VALUES ('9289463b-afbf-40dd-8cbe-f67c982994b6', 'Delete me')").run();
 
       const res = await app.inject({
         method: 'DELETE',
-        url: '/api/todos/del-id',
+        url: '/api/todos/9289463b-afbf-40dd-8cbe-f67c982994b6',
       });
 
       expect(res.statusCode).toBe(204);
 
-      const row = db.prepare("SELECT * FROM todos WHERE id = 'del-id'").get();
+      const row = db.prepare("SELECT * FROM todos WHERE id = '9289463b-afbf-40dd-8cbe-f67c982994b6'").get();
       expect(row).toBeUndefined();
     });
 
     it('returns 404 when todo does not exist', async () => {
       const res = await app.inject({
         method: 'DELETE',
-        url: '/api/todos/nonexistent',
+        url: '/api/todos/d3fd2ba0-c5c4-47c4-a436-37f1eb307e18',
       });
 
       expect(res.statusCode).toBe(404);

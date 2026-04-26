@@ -33,7 +33,7 @@ function toTodoResponse(row: DbTodoRow) {
 const todos: FastifyPluginAsync = async (fastify): Promise<void> => {
   fastify.setErrorHandler((error: FastifyError, _request, reply) => {
     if (error.validation) {
-      reply.code(400).send({ error: error.message });
+      reply.code(400).send({ error: 'Invalid request' });
       return;
     }
     /* c8 ignore next -- Fastify v5 always provides statusCode */
