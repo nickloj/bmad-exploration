@@ -27,4 +27,4 @@
 
 - **Validation error message detail** — AJV messages (e.g., "body/text must NOT have fewer than 1 characters") are sent as-is. Not truly internal like stack traces; revisit when API becomes public-facing. [server/src/routes/api/todos/index.ts]
 
-- **`completed_at` / `created_at` datetime format** — SQLite `datetime('now')` stores `"YYYY-MM-DD HH:MM:SS"` without a `Z` or `+00:00` suffix. Not valid ISO 8601. Clients parsing these as timestamps may get timezone bugs. Fix requires either appending `Z` in `toTodoResponse`, or changing the DB insert to store `strftime('%Y-%m-%dT%H:%M:%SZ', 'now')`. Pre-existing from Story 1.1 DB schema design. Address before shipping.
+- ~~**`completed_at` / `created_at` datetime format**~~ — **FIXED 2026-04-26**: `toIso()` helper in `toTodoResponse` now replaces space with `T` and appends `Z`. [server/src/routes/api/todos/index.ts]

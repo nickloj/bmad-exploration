@@ -15,13 +15,18 @@ interface DbTodoRow {
   completed_at: string | null;
 }
 
+function toIso(dt: string | null): string | null {
+  if (!dt) return null;
+  return dt.replace(' ', 'T') + 'Z';
+}
+
 function toTodoResponse(row: DbTodoRow) {
   return {
     id: row.id,
     text: row.text,
     completed: row.completed === 1,
-    createdAt: row.created_at,
-    completedAt: row.completed_at,
+    createdAt: toIso(row.created_at) ?? row.created_at,
+    completedAt: toIso(row.completed_at),
   };
 }
 
